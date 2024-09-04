@@ -304,9 +304,7 @@ func (b *StatefulsetBuilder) GetReadinessProbe() *corev1.Probe {
 				Command: []string{
 					"bash",
 					"-c",
-					// srvr command not work here, can not find reason, so use ruok instead
-					// fmt.Sprintf("exec 3<>/dev/tcp/127.0.0.1/%d && echo srvr >&3 && grep '^Mode: ' <&3", b.zkSecurity.ClientPort()),
-					fmt.Sprintf("exec 3<>/dev/tcp/127.0.0.1/%d && echo ruok >&3 && grep 'imok' <&3", b.zkSecurity.ClientPort()),
+					fmt.Sprintf("exec 3<>/dev/tcp/127.0.0.1/%d && echo srvr >&3 && grep '^Mode: ' <&3", b.zkSecurity.ClientPort()),
 				},
 			},
 		},

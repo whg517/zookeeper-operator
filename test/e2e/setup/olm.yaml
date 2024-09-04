@@ -7,7 +7,6 @@ spec:
   # so the operator will be able to watch and manage resources in all namespaces
   targetNamespaces:
     - ($namespace)
-    # - test
 ---
 apiVersion: operators.coreos.com/v1alpha1
 kind: CatalogSource
@@ -15,8 +14,6 @@ metadata:
   name: kubedoop-catalog
 spec:
   sourceType: grpc
-  grpcPodConfig:
-    securityContextConfig: restricted
   image: quay.io/zncdatadev/kubedata-catalog:latest
   displayName: kubedata-catalog
   publisher: zncdatadev

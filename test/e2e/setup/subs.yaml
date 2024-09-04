@@ -7,6 +7,4 @@ spec:
   name: secret-operator
   source: kubedoop-catalog
   sourceNamespace: ($namespace)
-  # sourceNamespace: test
   installPlanApproval: Automated  
-
