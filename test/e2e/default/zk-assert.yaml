@@ -6,6 +6,4 @@ status:
   replicas: 3
   availableReplicas: 3
   readyReplicas: 3
-
-
-
+  currentReplicas: 3
