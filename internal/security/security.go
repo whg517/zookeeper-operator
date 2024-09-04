@@ -98,10 +98,11 @@ func (z *ZookeeperSecurity) AddVolumeMounts(podBuilder *corev1.PodTemplateSpec, 
 		tlsVolume := util.CreateTlsKeystoreVolume(ServerTlsVolumeName, tlsSecretClass, z.sslStorePassword)
 		z.addVolume(podBuilder, tlsVolume)
 	}
-
-	z.addVolumeMount(zkContainer, QuorumTlsVolumeName, QuorumTLSDir)
-	quorumTLSVolume := util.CreateTlsKeystoreVolume(QuorumTlsVolumeName, z.quorumSecretClass, z.sslStorePassword)
-	z.addVolume(podBuilder, quorumTLSVolume)
+	if z.quorumSecretClass != "" {
+		z.addVolumeMount(zkContainer, QuorumTlsVolumeName, QuorumTLSDir)
+		quorumTLSVolume := util.CreateTlsKeystoreVolume(QuorumTlsVolumeName, z.quorumSecretClass, z.sslStorePassword)
+		z.addVolume(podBuilder, quorumTLSVolume)
+	}
 }
 
 // statefulset add tls volumes
@@ -118,16 +119,19 @@ func (z *ZookeeperSecurity) addVolumeMount(container *corev1.Container, volumeNa
 func (z *ZookeeperSecurity) ConfigSettings() map[string]string {
 	config := make(map[string]string)
 
-	// Quorum TLS
-	config[SSLQuorum] = "true"
-	config[SSLQuorumHostNameVerification] = "true"
-	config[SSLQuorumClientAuth] = "need"
-	config[ServerCnxnFactory] = "org.apache.zookeeper.server.NettyServerCnxnFactory"
-	config[SSLAuthProviderX509] = "org.apache.zookeeper.server.auth.X509AuthenticationProvider"
-	config[SSLQuorumKeyStoreLocation] = fmt.Sprintf("%s/keystore.p12", QuorumTLSDir)
-	config[SSLQuorumTrustStoreLocation] = fmt.Sprintf("%s/truststore.p12", QuorumTLSDir)
-	config[SSLQuorumKeyStorePassword] = z.sslStorePassword
-	config[SSLQuorumTrustStorePassword] = z.sslStorePassword
+	if z.quorumSecretClass != "" {
+		authNeeded := "need"
+		// Quorum TLS
+		config[SSLQuorum] = "true"
+		config[SSLQuorumHostNameVerification] = "true"
+		config[SSLQuorumClientAuth] = authNeeded
+		config[ServerCnxnFactory] = "org.apache.zookeeper.server.NettyServerCnxnFactory"
+		config[SSLAuthProviderX509] = "org.apache.zookeeper.server.auth.X509AuthenticationProvider"
+		config[SSLQuorumKeyStoreLocation] = fmt.Sprintf("%s/keystore.p12", QuorumTLSDir)
+		config[SSLQuorumTrustStoreLocation] = fmt.Sprintf("%s/truststore.p12", QuorumTLSDir)
+		config[SSLQuorumKeyStorePassword] = z.sslStorePassword
+		config[SSLQuorumTrustStorePassword] = z.sslStorePassword
+	}
 
 	// Server TLS
 	if z.TLSEnabled() {
