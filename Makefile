@@ -330,7 +330,7 @@ catalog-buildx: ## Build and push a catalog image for cross-platform support
 # kind
 KIND_VERSION ?= v0.23.0
 
-KINDTEST_K8S_VERSION ?= 1.27.11
+KINDTEST_K8S_VERSION ?= 1.27.16
 
 KIND_IMAGE ?= kindest/node:v${KINDTEST_K8S_VERSION}
 
